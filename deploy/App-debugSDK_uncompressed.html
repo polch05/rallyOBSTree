@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>RallyOrganizationalTree</title>
+    <title>RallyOrganizationalTreeTitle_X</title>
 
-    <script type="text/javascript" src="/apps/2.1/sdk-debug.js"></script>
+    <script type="text/javascript" src="https://rally1.rallydev.com/apps/2.1/sdk-debug.js"></script>
 
     <script type="text/javascript">
         Rally.onReady(function () {
@@ -36,14 +36,14 @@
                         },
                         {
                             dataIndex: 'EmailAddress',
-                            flex: 90
+                            flex: 60
                         },
                         {
-                            dataIndex: 'Phone',
-                            width: 10
+                            dataIndex: 'LandingPage',
+                            width: 70
                         },
                         {
-                            dataIndex: 'ArtifactsOwned',
+                            dataIndex: 'DefaultProject',
                             width: 80
                         },
                         {
@@ -62,7 +62,7 @@ Ext.define( 'Rally.ui.tree.extendedTreeItem' , {
     alias: 'widget.extendedTreeItem',
     extend: 'Rally.ui.tree.TreeItem',
     config: {
-        displayedFields: ['Name', 'Description', 'TeamMembers']
+        displayedFields: ['Name', 'Description', 'c_OBSLevel', 'TeamMembers']
     },
 
     getContentTpl: function() {
@@ -71,7 +71,7 @@ Ext.define( 'Rally.ui.tree.extendedTreeItem' , {
         return Ext.create('Ext.XTemplate',
             '<tpl if="this.canDrag()"><div class="icon drag"></div></tpl>',
             '{[this.getActionsGear()]}',
-            '<div class="textContent ellipses">{[this.getFormattedId()]} {[this.getSeparator()]}{Name} ({[this.getOwner()]})</div>',
+            '<div class="textContent ellipses"> <h4><b>{[this.getOBSLevel()]}</b></h4>: {[this.getFormattedId()]} {[this.getSeparator()]} {Name} - Owner: {[this.getOwner()]}</div>',
             '<div class="rightSide">',
             '</div>',
             {
@@ -91,6 +91,10 @@ Ext.define( 'Rally.ui.tree.extendedTreeItem' , {
                 getOwner: function() {
                     var record = me.getRecord();
                     return record.getField('Owner') ? Rally.ui.renderer.RendererFactory.renderRecordField(record, 'Owner') : '';
+                },
+                getOBSLevel: function() {
+                    var record = me.getRecord();
+                    return record.getField('c_OBSLevel') ? Rally.ui.renderer.RendererFactory.renderRecordField(record, 'c_OBSLevel') : '';
                 }
             }
         );
@@ -326,7 +330,7 @@ Ext.define('CustomApp', {
             childItemsStoreConfigForParentRecordFn: function(record){
 
                 var storeConfig = {
-                    fetch: ['Name', 'Description', 'Owner', 'Children:summary[State]', 'State', 'Workspace'],
+                    fetch: ['Name', 'Description', 'Owner', 'c_OBSLevel', 'Children:summary[State]', 'State', 'Workspace'],
                     hydrate: ['Owner'],
                     sorters: [{
                         property: 'Name',
@@ -367,7 +371,7 @@ Ext.define('CustomApp', {
 
 
             Rally.launchApp('CustomApp', {
-                name:"RallyOrganizationalHierarchyAppName",
+                name:"ProjectTree",
 	            parentRepos:""
             });
 
